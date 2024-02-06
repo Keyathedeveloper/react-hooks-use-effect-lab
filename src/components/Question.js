@@ -1,9 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function Question({ question, onAnswered }) {
   const [timeRemaining, setTimeRemaining] = useState(10);
 
-  // add useEffect code
+  useEffect(() => {
+    // Define handleTimeout inside the useEffect callback
+    function handleTimeout() {
+      setTimeRemaining(10);
+      onAnswered(false);
+    }
+
+    // Exit early if the timer reaches 0
+    if (timeRemaining === 0) {
+      handleTimeout();
+      return;
+    }
+
+    // Create a timer that decrements timeRemaining every second
+    const timerId = setTimeout(() => {
+      setTimeRemaining((prevTime) => prevTime - 1);
+    }, 1000);
+
+    // Cleanup the timer on component unmount or when the question changes
+    return () => clearTimeout(timerId);
+  }, [timeRemaining, onAnswered]); // Include dependencies in the dependency array
 
   function handleAnswer(isCorrect) {
     setTimeRemaining(10);
